@@ -1,147 +1,93 @@
 {
-    "info": {
-      "_postman_id": "77777777-8888-9999-0000-abcdefabcdef",
-      "name": "Exemplo Completo de API",
-      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
-    "item": [
-      {
-        "name": "Login",
-        "request": {
-          "method": "POST",
-          "header": [
+  "info": {
+    "_postman_id": "abcd1234",
+    "name": "API Usuários",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Usuários",
+      "item": [
+        {
+          "name": "Criar usuário",
+          "event": [
             {
-              "key": "Content-Type",
-              "value": "application/json"
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", \"123456-token-test\");"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Usuário criado com ID\", function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json).to.have.property(\"id\");",
+                  "  pm.expect(json.deleted).to.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
             }
           ],
-          "body": {
-            "mode": "raw",
-            "raw": "{\"username\": \"admin\", \"password\": \"123456\"}"
-          },
-          "url": {
-            "raw": "https://jsonplaceholder.typicode.com/posts",
-            "protocol": "https",
-            "host": ["jsonplaceholder", "typicode", "com"],
-            "path": ["posts"]
-          }
-        },
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "exec": [
-                "pm.test(\"Status 201\", function () {",
-                "  pm.response.to.have.status(201);",
-                "});",
-                "",
-                "pm.test(\"Retorna ID\", function () {",
-                "  var json = pm.response.json();",
-                "  pm.expect(json.id).to.exist;",
-                "});"
-              ]
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Admin\", \"email\": \"admin@example.com\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
             }
           }
-        ]
-      },
-      {
-        "name": "Buscar Posts",
-        "request": {
-          "method": "GET",
-          "header": [
+        },
+        {
+          "name": "Buscar usuário",
+          "event": [
             {
-              "key": "Authorization",
-              "value": "Bearer fake-token-123"
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Dados do usuário corretos\", function () {",
+                  "  var json = pm.response.json();",
+                  "  pm.expect(json.name).to.eql(\"Admin\");",
+                  "  pm.expect(json.role).to.not.eql(\"guest\");",
+                  "});"
+                ]
+              }
             }
           ],
-          "url": {
-            "raw": "https://jsonplaceholder.typicode.com/posts",
-            "protocol": "https",
-            "host": ["jsonplaceholder", "typicode", "com"],
-            "path": ["posts"]
-          }
-        },
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "exec": [
-                "pm.test(\"Status 200\", function () {",
-                "  pm.response.to.have.status(200);",
-                "});",
-                "",
-                "pm.test(\"Retorna lista de posts\", function () {",
-                "  var json = pm.response.json();",
-                "  pm.expect(json).to.be.an('array');",
-                "  pm.expect(json.length).to.be.above(0);",
-                "});"
-              ]
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
             }
           }
-        ]
-      },
-      {
-        "name": "Atualizar Post",
-        "request": {
-          "method": "PUT",
-          "header": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "body": {
-            "mode": "raw",
-            "raw": "{\"id\": 1, \"title\": \"Atualizado\"}"
-          },
-          "url": {
-            "raw": "https://jsonplaceholder.typicode.com/posts/1",
-            "protocol": "https",
-            "host": ["jsonplaceholder", "typicode", "com"],
-            "path": ["posts", "1"]
-          }
-        },
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "exec": [
-                "pm.test(\"Status 200\", function () {",
-                "  pm.response.to.have.status(200);",
-                "});",
-                "",
-                "pm.test(\"Título atualizado\", function () {",
-                "  var json = pm.response.json();",
-                "  pm.expect(json.title).to.eql(\"Atualizado\");",
-                "});"
-              ]
-            }
-          }
-        ]
-      },
-      {
-        "name": "Deletar Post",
-        "request": {
-          "method": "DELETE",
-          "url": {
-            "raw": "https://jsonplaceholder.typicode.com/posts/1",
-            "protocol": "https",
-            "host": ["jsonplaceholder", "typicode", "com"],
-            "path": ["posts", "1"]
-          }
-        },
-        "event": [
-          {
-            "listen": "test",
-            "script": {
-              "exec": [
-                "pm.test(\"Status 200 ou 204\", function () {",
-                "  pm.expect([200, 204]).to.include(pm.response.code);",
-                "});"
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }  
+        }
+      ]
+    }
+  ]
+}
