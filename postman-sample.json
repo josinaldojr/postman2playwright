@@ -1,0 +1,147 @@
+{
+    "info": {
+      "_postman_id": "77777777-8888-9999-0000-abcdefabcdef",
+      "name": "Exemplo Completo de API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Login",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\"username\": \"admin\", \"password\": \"123456\"}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status 201\", function () {",
+                "  pm.response.to.have.status(201);",
+                "});",
+                "",
+                "pm.test(\"Retorna ID\", function () {",
+                "  var json = pm.response.json();",
+                "  pm.expect(json.id).to.exist;",
+                "});"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Buscar Posts",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer fake-token-123"
+            }
+          ],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status 200\", function () {",
+                "  pm.response.to.have.status(200);",
+                "});",
+                "",
+                "pm.test(\"Retorna lista de posts\", function () {",
+                "  var json = pm.response.json();",
+                "  pm.expect(json).to.be.an('array');",
+                "  pm.expect(json.length).to.be.above(0);",
+                "});"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Atualizar Post",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\"id\": 1, \"title\": \"Atualizado\"}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts/1",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts", "1"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status 200\", function () {",
+                "  pm.response.to.have.status(200);",
+                "});",
+                "",
+                "pm.test(\"Título atualizado\", function () {",
+                "  var json = pm.response.json();",
+                "  pm.expect(json.title).to.eql(\"Atualizado\");",
+                "});"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Deletar Post",
+        "request": {
+          "method": "DELETE",
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts/1",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts", "1"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status 200 ou 204\", function () {",
+                "  pm.expect([200, 204]).to.include(pm.response.code);",
+                "});"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }  
